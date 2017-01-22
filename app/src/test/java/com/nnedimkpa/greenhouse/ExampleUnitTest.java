@@ -1,4 +1,4 @@
-package com.example.nnedimkpa.greenhouse;
+package com.nnedimkpa.greenhouse;
 
 import org.junit.Test;
 

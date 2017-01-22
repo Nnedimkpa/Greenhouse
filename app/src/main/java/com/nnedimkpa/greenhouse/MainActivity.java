@@ -1,4 +1,4 @@
-package com.example.nnedimkpa.greenhouse;
+package com.nnedimkpa.greenhouse;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
