@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "637209603011",
+    "firebase_url": "https://greenhouse-d556f.firebaseio.com",
+    "project_id": "greenhouse-d556f",
+    "storage_bucket": "greenhouse-d556f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:637209603011:android:64e9e269f23da1d3",
+        "android_client_info": {
+          "package_name": "com.nnedimkpa.greenhouse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "637209603011-fama2hp7e1m9f8kqdcpkogdrsq3ns9rm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nnedimkpa.greenhouse",
+            "certificate_hash": "2fe6d434bb34719b9822f623a1baf272ef40e088"
+          }
+        },
+        {
+          "client_id": "637209603011-4nj7qnp2aogkm0n5n5kaev7kmh7i2jfh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8q7A3zCkZchIgTtY1KvyaYNTUH1RFI4U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "637209603011-4nj7qnp2aogkm0n5n5kaev7kmh7i2jfh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

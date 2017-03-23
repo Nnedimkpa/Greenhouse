@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<item
+    android:id="@+id/nav_control"
+    android:title="Control"
+    android:icon="@drawable/ic_settings_applications_black_24dp"/>
+    <item
+        android:id="@+id/nav_charts"
+        android:title="Charts"
+        android:icon="@drawable/ic_insert_chart_black_24dp"/>
+</menu>

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.nnedimkpa.greenhouse.control.ControlActivity;
 import com.nnedimkpa.greenhouse.databinding.ActivityModeSelectBinding;
 

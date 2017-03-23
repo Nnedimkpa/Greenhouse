@@ -3,9 +3,11 @@ package com.nnedimkpa.greenhouse;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.nnedimkpa.greenhouse.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -15,6 +17,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
+        /*Code to sign in user into firebase anonymously*/
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        auth.signInAnonymously();
 
         //Making the buttons clickable
         binding.beans.setOnClickListener(this);
@@ -43,4 +49,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("plantData", plantData);
         startActivity(intent);
     }
+
+
 }
