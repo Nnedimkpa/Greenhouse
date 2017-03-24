@@ -1,29 +1,22 @@
 package com.nnedimkpa.greenhouse.control.chart;
 
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.nnedimkpa.greenhouse.R;
+import com.nnedimkpa.greenhouse.control.ControlActivity;
 import com.nnedimkpa.greenhouse.control.chart.formatter.AxisFormatter;
-import com.nnedimkpa.greenhouse.model.ParseJSON;
 import com.nnedimkpa.greenhouse.model.Reading;
-
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,18 +26,17 @@ import java.util.List;
  * Use the {@link ChartFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ChartFragment extends Fragment implements Response.ErrorListener, Response.Listener<String> {
+public class ChartFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
-
+    ProgressDialog progressDialog;
     // TODO: Rename and change types of parameters
     private int plantData;
-    private ArrayList<Reading> readings;
     private List<BarEntry> tempEntry = new ArrayList<>(), humidityEntry = new ArrayList<>(), lightEntry = new ArrayList<>(), waterEntry = new ArrayList<>();
     private BarChart tempChart, humidityChart, lightChart, waterChart;
-    private static final String THING_SPEAK_URL = "https://api.thingspeak.com/channels/220794/feeds.json?results=30&api_key=MO4W3RQUZKP7B1OO";
     private String[] xAxisVals;
+    private ControlActivity activity;
 
     public ChartFragment() {
         // Required empty public constructor
@@ -72,6 +64,7 @@ public class ChartFragment extends Fragment implements Response.ErrorListener, R
         if (getArguments() != null) {
             plantData = getArguments().getInt(ARG_PARAM1);
         }
+        activity = (ControlActivity) getActivity();
     }
 
     @Override
@@ -83,36 +76,13 @@ public class ChartFragment extends Fragment implements Response.ErrorListener, R
         lightChart = (BarChart) view.findViewById(R.id.lightChart);
         humidityChart = (BarChart) view.findViewById(R.id.humidityChart);
         waterChart = (BarChart) view.findViewById(R.id.waterChart);
-
-        sendRequest();
+        showProgressDialog();
+        activity.sendRequest();
         return view;
     }
 
-    private void sendRequest() {
-        StringRequest request = new StringRequest(Request.Method.GET, THING_SPEAK_URL, this, this);
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-        requestQueue.add(request);
 
-    }
-
-    @Override
-    public void onErrorResponse(VolleyError error) {
-
-    }
-
-    @Override
-    public void onResponse(String response) {
-        ParseJSON parseJSON = new ParseJSON();
-        try {
-            readings = parseJSON.readJson(response);
-            convertReadingToEntry();
-            plotGraphs();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void plotGraphs() {
+    public void plotGraphs() {
         plotTempGraph();
         plotLightGraph();
         plotWaterGraph();
@@ -157,8 +127,8 @@ public class ChartFragment extends Fragment implements Response.ErrorListener, R
         waterChart.invalidate();
     }
 
-    private void convertReadingToEntry() {
-        xAxisVals = new String [readings.size()];
+    public void convertReadingToEntry(ArrayList<Reading> readings) {
+        xAxisVals = new String[readings.size()];
         int i = 0;
         for (Reading reading : readings) {
             tempEntry.add(new BarEntry(reading.getId(), reading.getInnerTemperature()));
@@ -170,5 +140,16 @@ public class ChartFragment extends Fragment implements Response.ErrorListener, R
         }
 
 
+    }
+
+    public void showProgressDialog() {
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setTitle("Loading data");
+        progressDialog.setMessage("Please wait, loading data from ThingSpeak");
+        progressDialog.show();
+    }
+
+    public void dismissProgressDialog() {
+        progressDialog.dismiss();
     }
 }

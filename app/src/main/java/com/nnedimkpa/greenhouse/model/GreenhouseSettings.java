@@ -5,6 +5,7 @@ package com.nnedimkpa.greenhouse.model;
  */
 
 public class GreenhouseSettings {
+    private int automatic;
     private int bulb;
     private int coolingFan;
     private int exhaustFan;
@@ -52,5 +53,13 @@ public class GreenhouseSettings {
 
     public boolean getPump() {
         return pump == 1;
+    }
+
+    public boolean getAutomatic() {
+        return automatic == 1;
+    }
+
+    public void setAutomatic(int automatic) {
+        this.automatic = automatic;
     }
 }

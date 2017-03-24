@@ -93,7 +93,6 @@ public class ManualFragment extends Fragment implements View.OnClickListener,Res
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_manual, container, false);
 showProgressDialog();
         sendRequest();
-        setMode(MODE_AUTOMATIC);
 
         binding.bulbOff.setOnClickListener(this);
         binding.bulbOn.setOnClickListener(this);
@@ -106,6 +105,7 @@ showProgressDialog();
         binding.pumpOff.setOnClickListener(this);
         binding.pumpOn.setOnClickListener(this);
         binding.modeSwitch.setOnClickListener(this);
+        reference.child("plantData").setValue(plantData);
         reference.addValueEventListener(this);
         return binding.getRoot();
     }
@@ -136,39 +136,46 @@ showProgressDialog();
 
     @Override
     public void onClick(View view) {
-        Toast.makeText(getActivity(), "Working on it...", Toast.LENGTH_SHORT).show();
+
         switch (view.getId()) {
             case R.id.bulbOff:
-
+                Toast.makeText(getActivity(), "Working on it...", Toast.LENGTH_SHORT).show();
                 setBulbState(MODE_OFF);
                 break;
             case R.id.bulbOn:
-
-                setBulbState(MODE_OFF);
+                Toast.makeText(getActivity(), "Working on it...", Toast.LENGTH_SHORT).show();
+                setBulbState(MODE_ON);
                 break;
             case R.id.coolingFanOff:
-
+                Toast.makeText(getActivity(), "Working on it...", Toast.LENGTH_SHORT).show();
                 setCoolingFanState(MODE_OFF);
                 break;
             case R.id.coolingFanOn:
+                Toast.makeText(getActivity(), "Working on it...", Toast.LENGTH_SHORT).show();
                 setCoolingFanState(MODE_ON);
                 break;
             case R.id.exhaustFanOff:
+                Toast.makeText(getActivity(), "Working on it...", Toast.LENGTH_SHORT).show();
                 setExhaustFanState(MODE_OFF);
                 break;
             case R.id.exhaustFanOn:
+                Toast.makeText(getActivity(), "Working on it...", Toast.LENGTH_SHORT).show();
                 setExhaustFanState(MODE_ON);
                 break;
             case R.id.lightOff:
+                Toast.makeText(getActivity(), "Working on it...", Toast.LENGTH_SHORT).show();
                 setLightState(MODE_OFF);
                 break;
             case R.id.lightOn:
+                Toast.makeText(getActivity(), "Working on it...", Toast.LENGTH_SHORT).show();
                 setLightState(MODE_ON);
                 break;
             case R.id.pumpOff:
+                Toast.makeText(getActivity(), "Working on it...", Toast.LENGTH_SHORT).show();
                 setPumpState(MODE_OFF);
                 break;
             case R.id.pumpOn:
+                Toast.makeText(getActivity(), "Working on it...", Toast.LENGTH_SHORT).show();
                 setPumpState(MODE_ON);
                 break;
             case R.id.modeSwitch:
@@ -178,6 +185,7 @@ showProgressDialog();
     }
 
     private void updateUI(GreenhouseSettings settings) {
+        binding.modeSwitch.setChecked(settings.getAutomatic());
         if (settings.getPump()){
             binding.pumpOn.setBackgroundColor(Color.parseColor("#8bc34a"));
             binding.pumpOff.setBackgroundColor(Color.parseColor("#eeeeee"));
@@ -219,6 +227,11 @@ showProgressDialog();
             binding.lightOff.setBackgroundColor(Color.parseColor("#8bc34a"));
             binding.lightOn.setBackgroundColor(Color.parseColor("#eeeeee"));
         }
+        if (settings.getAutomatic()){
+            doAutoStuff();
+
+        }
+        else doManualStuff();
     }
 
     private void doStuffWithSwitch() {
@@ -276,7 +289,7 @@ dismissProgressDialog();
             binding.waterText.setText("Water Level: " + reading.getWaterLevel() + "%");
             binding.humidityText.setText("Humidity: " + reading.getHumidity() + "%");
             binding.tempText.setText("Outer Temperature: " + reading.getInnerTemperature() + "C");
-        } catch (JSONException e) {
+        } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
         }
         resendRequest();
@@ -303,6 +316,7 @@ dismissProgressDialog();
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
         GreenhouseSettings settings = dataSnapshot.getValue(GreenhouseSettings.class);
+
         updateUI(settings);
     }
 
