@@ -116,6 +116,9 @@ public class ControlActivity extends AppCompatActivity implements BottomNavigati
 
     @Override
     public void onErrorResponse(VolleyError error) {
+        ChartFragment chartFragment = (ChartFragment)this.chartFragment;
+        chartFragment.dismissProgressDialog();
+        chartFragment.showError();
 
     }
 

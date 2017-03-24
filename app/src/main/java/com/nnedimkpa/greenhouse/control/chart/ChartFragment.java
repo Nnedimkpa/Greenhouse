@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -151,5 +152,9 @@ public class ChartFragment extends Fragment {
 
     public void dismissProgressDialog() {
         progressDialog.dismiss();
+    }
+
+    public void showError(){
+        Toast.makeText(getActivity(), "There was error loading data", Toast.LENGTH_SHORT).show();
     }
 }
