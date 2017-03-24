@@ -36,20 +36,18 @@ import org.json.JSONException;
  * Use the {@link ManualFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ManualFragment extends Fragment implements View.OnClickListener,Response.ErrorListener, Response.Listener<String>, Runnable, ValueEventListener {
+public class ManualFragment extends Fragment implements View.OnClickListener, Response.ErrorListener, Response.Listener<String>, Runnable, ValueEventListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
-    private DatabaseReference reference;
     private static final int MODE_AUTOMATIC = 1;
     private static final int MODE_MANUAL = 0;
     private static final int MODE_ON = 1;
     private static final int MODE_OFF = 0;
-    private static final String THING_SPEAK_URL="https://api.thingspeak.com/channels/220794/feeds/last.json?api_key=MO4W3RQUZKP7B1OO";
-    private ProgressDialog progressDialog;
+    private static final String THING_SPEAK_URL = "https://api.thingspeak.com/channels/220794/feeds/last.json?api_key=MO4W3RQUZKP7B1OO";
     final Handler handler = new Handler();
-
-
+    private DatabaseReference reference;
+    private ProgressDialog progressDialog;
     // TODO: Rename and change types of parameters
     private int plantData;
     private FragmentManualBinding binding;
@@ -91,7 +89,7 @@ public class ManualFragment extends Fragment implements View.OnClickListener,Res
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_manual, container, false);
-showProgressDialog();
+        showProgressDialog();
         sendRequest();
 
         binding.bulbOff.setOnClickListener(this);
@@ -118,8 +116,8 @@ showProgressDialog();
     private void setMode(int mode) {
 
         reference.child("automatic").setValue(mode);
-        if (mode == MODE_AUTOMATIC)doAutoStuff();
-        if (mode == MODE_MANUAL)doManualStuff();
+        if (mode == MODE_AUTOMATIC) doAutoStuff();
+        if (mode == MODE_MANUAL) doManualStuff();
     }
 
     @SuppressLint("SetTextI18n")
@@ -186,52 +184,51 @@ showProgressDialog();
 
     private void updateUI(GreenhouseSettings settings) {
         binding.modeSwitch.setChecked(settings.getAutomatic());
-        if (settings.getPump()){
+        if (settings.getPump()) {
             binding.pumpOn.setBackgroundColor(Color.parseColor("#8bc34a"));
             binding.pumpOff.setBackgroundColor(Color.parseColor("#eeeeee"));
-        }else{
+        } else {
             binding.pumpOff.setBackgroundColor(Color.parseColor("#8bc34a"));
             binding.pumpOn.setBackgroundColor(Color.parseColor("#eeeeee"));
         }
 
-        if (settings.getBulb()){
+        if (settings.getBulb()) {
             binding.bulbOn.setBackgroundColor(Color.parseColor("#8bc34a"));
             binding.bulbOff.setBackgroundColor(Color.parseColor("#eeeeee"));
 
-        }else{
+        } else {
             binding.bulbOff.setBackgroundColor(Color.parseColor("#8bc34a"));
             binding.bulbOn.setBackgroundColor(Color.parseColor("#eeeeee"));
         }
 
-        if(settings.getCoolingFan()){
+        if (settings.getCoolingFan()) {
             binding.coolingFanOn.setBackgroundColor(Color.parseColor("#8bc34a"));
             binding.coolingFanOff.setBackgroundColor(Color.parseColor("#eeeeee"));
 
-        }else {
+        } else {
             binding.coolingFanOff.setBackgroundColor(Color.parseColor("#8bc34a"));
             binding.coolingFanOn.setBackgroundColor(Color.parseColor("#eeeeee"));
         }
-        if (settings.getExhaustFan()){
+        if (settings.getExhaustFan()) {
             binding.exhaustFanOn.setBackgroundColor(Color.parseColor("#8bc34a"));
             binding.exhaustFanOff.setBackgroundColor(Color.parseColor("#eeeeee"));
-        }else{
+        } else {
             binding.exhaustFanOff.setBackgroundColor(Color.parseColor("#8bc34a"));
             binding.exhaustFanOn.setBackgroundColor(Color.parseColor("#eeeeee"));
         }
 
-        if (settings.getLight()){
+        if (settings.getLight()) {
             binding.lightOn.setBackgroundColor(Color.parseColor("#8bc34a"));
             binding.lightOff.setBackgroundColor(Color.parseColor("#eeeeee"));
 
-        }else {
+        } else {
             binding.lightOff.setBackgroundColor(Color.parseColor("#8bc34a"));
             binding.lightOn.setBackgroundColor(Color.parseColor("#eeeeee"));
         }
-        if (settings.getAutomatic()){
+        if (settings.getAutomatic()) {
             doAutoStuff();
 
-        }
-        else doManualStuff();
+        } else doManualStuff();
     }
 
     private void doStuffWithSwitch() {
@@ -269,13 +266,13 @@ showProgressDialog();
         requestQueue.add(request);
     }
 
-    private void resendRequest(){
+    private void resendRequest() {
         handler.postDelayed(this, 15000);
     }
 
     @Override
     public void onErrorResponse(VolleyError error) {
-dismissProgressDialog();
+        dismissProgressDialog();
         resendRequest();
     }
 
@@ -302,14 +299,14 @@ dismissProgressDialog();
         requestQueue.add(request);
     }
 
-    private void showProgressDialog(){
+    private void showProgressDialog() {
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setTitle("Loading data");
         progressDialog.setMessage("Please wait, loading data from ThingSpeak");
         progressDialog.show();
     }
 
-    private void dismissProgressDialog(){
+    private void dismissProgressDialog() {
         progressDialog.dismiss();
     }
 
@@ -319,7 +316,6 @@ dismissProgressDialog();
 
         updateUI(settings);
     }
-
 
 
     @Override
