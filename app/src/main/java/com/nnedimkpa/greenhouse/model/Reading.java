@@ -6,7 +6,8 @@ package com.nnedimkpa.greenhouse.model;
 
 public class Reading {
 
-    private long date;
+    private String date;
+    private long id;
     private long innerTemperature;
     private long humidity;
     private long light;
@@ -16,13 +17,13 @@ public class Reading {
 
     }
 
-    public float getDate() {
+    public String getDate() {
         return date;
     }
 
     public void setDate(String date) {
 
-        this.date = convertDate(date);
+        this.date = date;
     }
 
     public long getInnerTemperature() {
@@ -63,4 +64,11 @@ public class Reading {
         return null;
     }
 
+    public float getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }

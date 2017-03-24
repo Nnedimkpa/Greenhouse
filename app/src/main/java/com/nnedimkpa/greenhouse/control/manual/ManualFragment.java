@@ -1,7 +1,10 @@
 package com.nnedimkpa.greenhouse.control.manual;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,13 +30,15 @@ import org.json.JSONException;
  * Use the {@link ManualFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ManualFragment extends Fragment implements View.OnClickListener,Response.ErrorListener, Response.Listener<String> {
+public class ManualFragment extends Fragment implements View.OnClickListener,Response.ErrorListener, Response.Listener<String>, Runnable {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private DatabaseReference reference;
     private final int MODE_AUTOMATIC = 1;
     private final int MODE_MANUAL = 0;
+    private static final String THING_SPEAK_URL="https://api.thingspeak.com/channels/220794/feeds/last.json?api_key=MO4W3RQUZKP7B1OO";
+    private ProgressDialog progressDialog;
 
     // TODO: Rename and change types of parameters
     private int plantData;
@@ -76,7 +81,8 @@ public class ManualFragment extends Fragment implements View.OnClickListener,Res
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_manual, container, false);
-
+showProgressDialog();
+        sendRequest();
         setMode(MODE_AUTOMATIC);
 
         binding.bulbOff.setOnClickListener(this);
@@ -94,7 +100,22 @@ public class ManualFragment extends Fragment implements View.OnClickListener,Res
     }
 
     private void setMode(int mode) {
+
         reference.child("automatic").setValue(mode);
+        if (mode == MODE_AUTOMATIC)doAutoStuff();
+        if (mode == MODE_MANUAL)doManualStuff();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void doManualStuff() {
+        binding.modeText.setText("Automatic Mode Off");
+        binding.buttonsLayout.setVisibility(View.VISIBLE);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void doAutoStuff() {
+        binding.modeText.setText("Automatic Mode On");
+        binding.buttonsLayout.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -139,14 +160,9 @@ public class ManualFragment extends Fragment implements View.OnClickListener,Res
     private void doStuffWithSwitch() {
         if (binding.modeSwitch.isChecked()) {
             setMode(MODE_AUTOMATIC);
-            binding.modeText.setText("Automatic Mode On");
-            binding.buttonsLayout.setVisibility(View.INVISIBLE);
             return;
         }
         setMode(MODE_MANUAL);
-        binding.modeText.setText("Automatic Mode Off");
-        binding.buttonsLayout.setVisibility(View.VISIBLE);
-
     }
 
     private void setBulbState(int state) {
@@ -170,20 +186,26 @@ public class ManualFragment extends Fragment implements View.OnClickListener,Res
         reference.child("pump").setValue(state);
     }
 
-    private void sendRequest(String url) {
-        StringRequest request = new StringRequest(Request.Method.GET, url, this, this);
+    private void sendRequest() {
+        StringRequest request = new StringRequest(Request.Method.GET, THING_SPEAK_URL, this, this);
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         requestQueue.add(request);
+    }
 
+    private void resendRequest(){
+        final Handler handler = new Handler();
+        handler.postDelayed(this, 15000);
     }
 
     @Override
     public void onErrorResponse(VolleyError error) {
-
+dismissProgressDialog();
+        resendRequest();
     }
 
     @Override
     public void onResponse(String response) {
+        dismissProgressDialog();
         ParseJSON parseJson = new ParseJSON();
         try {
             Reading reading = parseJson.readSingleObject(response);
@@ -194,5 +216,24 @@ public class ManualFragment extends Fragment implements View.OnClickListener,Res
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        resendRequest();
+    }
+
+    @Override
+    public void run() {
+        StringRequest request = new StringRequest(Request.Method.GET, THING_SPEAK_URL, this, this);
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        requestQueue.add(request);
+    }
+
+    private void showProgressDialog(){
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setTitle("Loading data");
+        progressDialog.setMessage("Please wait, loading data from ThingSpeak");
+        progressDialog.show();
+    }
+
+    private void dismissProgressDialog(){
+        progressDialog.dismiss();
     }
 }

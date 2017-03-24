@@ -27,6 +27,7 @@ public class ParseJSON {
             long waterLevel = feedArrayObject.getLong("field4");
 
             Reading reading = new Reading();
+            reading.setId(i);
             reading.setDate(date);
             reading.setInnerTemperature(innerTemp);
             reading.setHumidity(humidity);
