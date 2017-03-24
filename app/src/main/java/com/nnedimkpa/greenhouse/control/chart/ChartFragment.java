@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -27,7 +28,7 @@ import java.util.List;
  * Use the {@link ChartFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ChartFragment extends Fragment {
+public class ChartFragment extends Fragment implements View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -77,10 +78,13 @@ public class ChartFragment extends Fragment {
         lightChart = (BarChart) view.findViewById(R.id.lightChart);
         humidityChart = (BarChart) view.findViewById(R.id.humidityChart);
         waterChart = (BarChart) view.findViewById(R.id.waterChart);
+        Button refreshButton = (Button) view.findViewById(R.id.refresh);
+        refreshButton.setOnClickListener(this);
         showProgressDialog();
         activity.sendRequest();
         return view;
     }
+
 
 
     public void plotGraphs() {
@@ -156,5 +160,10 @@ public class ChartFragment extends Fragment {
 
     public void showError(){
         Toast.makeText(getActivity(), "There was error loading data", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onClick(View v) {
+        activity.refreshCharts();
     }
 }

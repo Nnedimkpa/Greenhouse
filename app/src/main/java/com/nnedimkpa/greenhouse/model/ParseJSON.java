@@ -15,6 +15,7 @@ public class ParseJSON {
 
     public ArrayList<Reading> readJson(String jsonString) throws JSONException {
         JSONObject readingsJsonObject = new JSONObject(jsonString);
+
         JSONArray feedsArray = readingsJsonObject.getJSONArray("feeds");
 
         ArrayList<Reading> allReadings = new ArrayList<>();
