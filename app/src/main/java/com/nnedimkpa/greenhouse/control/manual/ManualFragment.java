@@ -3,12 +3,14 @@ package com.nnedimkpa.greenhouse.control.manual;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -16,10 +18,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.nnedimkpa.greenhouse.R;
 import com.nnedimkpa.greenhouse.databinding.FragmentManualBinding;
+import com.nnedimkpa.greenhouse.model.GreenhouseSettings;
 import com.nnedimkpa.greenhouse.model.ParseJSON;
 import com.nnedimkpa.greenhouse.model.Reading;
 
@@ -30,13 +36,15 @@ import org.json.JSONException;
  * Use the {@link ManualFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ManualFragment extends Fragment implements View.OnClickListener,Response.ErrorListener, Response.Listener<String>, Runnable {
+public class ManualFragment extends Fragment implements View.OnClickListener,Response.ErrorListener, Response.Listener<String>, Runnable, ValueEventListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private DatabaseReference reference;
-    private final int MODE_AUTOMATIC = 1;
-    private final int MODE_MANUAL = 0;
+    private static final int MODE_AUTOMATIC = 1;
+    private static final int MODE_MANUAL = 0;
+    private static final int MODE_ON = 1;
+    private static final int MODE_OFF = 0;
     private static final String THING_SPEAK_URL="https://api.thingspeak.com/channels/220794/feeds/last.json?api_key=MO4W3RQUZKP7B1OO";
     private ProgressDialog progressDialog;
     final Handler handler = new Handler();
@@ -98,6 +106,7 @@ showProgressDialog();
         binding.pumpOff.setOnClickListener(this);
         binding.pumpOn.setOnClickListener(this);
         binding.modeSwitch.setOnClickListener(this);
+        reference.addValueEventListener(this);
         return binding.getRoot();
     }
 
@@ -127,40 +136,88 @@ showProgressDialog();
 
     @Override
     public void onClick(View view) {
+        Toast.makeText(getActivity(), "Working on it...", Toast.LENGTH_SHORT).show();
         switch (view.getId()) {
             case R.id.bulbOff:
-                setBulbState(0);
+
+                setBulbState(MODE_OFF);
                 break;
             case R.id.bulbOn:
-                setBulbState(1);
+
+                setBulbState(MODE_OFF);
                 break;
             case R.id.coolingFanOff:
-                setCoolingFanState(0);
+
+                setCoolingFanState(MODE_OFF);
                 break;
             case R.id.coolingFanOn:
-                setCoolingFanState(1);
+                setCoolingFanState(MODE_ON);
                 break;
             case R.id.exhaustFanOff:
-                setExhaustFanState(0);
+                setExhaustFanState(MODE_OFF);
                 break;
             case R.id.exhaustFanOn:
-                setExhaustFanState(1);
+                setExhaustFanState(MODE_ON);
                 break;
             case R.id.lightOff:
-                setLightState(0);
+                setLightState(MODE_OFF);
                 break;
             case R.id.lightOn:
-                setLightState(1);
+                setLightState(MODE_ON);
                 break;
             case R.id.pumpOff:
-                setPumpState(0);
+                setPumpState(MODE_OFF);
                 break;
             case R.id.pumpOn:
-                setPumpState(1);
+                setPumpState(MODE_ON);
                 break;
             case R.id.modeSwitch:
                 doStuffWithSwitch();
                 break;
+        }
+    }
+
+    private void updateUI(GreenhouseSettings settings) {
+        if (settings.getPump()){
+            binding.pumpOn.setBackgroundColor(Color.parseColor("#8bc34a"));
+            binding.pumpOff.setBackgroundColor(Color.parseColor("#eeeeee"));
+        }else{
+            binding.pumpOff.setBackgroundColor(Color.parseColor("#8bc34a"));
+            binding.pumpOn.setBackgroundColor(Color.parseColor("#eeeeee"));
+        }
+
+        if (settings.getBulb()){
+            binding.bulbOn.setBackgroundColor(Color.parseColor("#8bc34a"));
+            binding.bulbOff.setBackgroundColor(Color.parseColor("#eeeeee"));
+
+        }else{
+            binding.bulbOff.setBackgroundColor(Color.parseColor("#8bc34a"));
+            binding.bulbOn.setBackgroundColor(Color.parseColor("#eeeeee"));
+        }
+
+        if(settings.getCoolingFan()){
+            binding.coolingFanOn.setBackgroundColor(Color.parseColor("#8bc34a"));
+            binding.coolingFanOff.setBackgroundColor(Color.parseColor("#eeeeee"));
+
+        }else {
+            binding.coolingFanOff.setBackgroundColor(Color.parseColor("#8bc34a"));
+            binding.coolingFanOn.setBackgroundColor(Color.parseColor("#eeeeee"));
+        }
+        if (settings.getExhaustFan()){
+            binding.exhaustFanOn.setBackgroundColor(Color.parseColor("#8bc34a"));
+            binding.exhaustFanOff.setBackgroundColor(Color.parseColor("#eeeeee"));
+        }else{
+            binding.exhaustFanOff.setBackgroundColor(Color.parseColor("#8bc34a"));
+            binding.exhaustFanOn.setBackgroundColor(Color.parseColor("#eeeeee"));
+        }
+
+        if (settings.getLight()){
+            binding.lightOn.setBackgroundColor(Color.parseColor("#8bc34a"));
+            binding.lightOff.setBackgroundColor(Color.parseColor("#eeeeee"));
+
+        }else {
+            binding.lightOff.setBackgroundColor(Color.parseColor("#8bc34a"));
+            binding.lightOn.setBackgroundColor(Color.parseColor("#eeeeee"));
         }
     }
 
@@ -181,7 +238,7 @@ showProgressDialog();
     }
 
     private void setExhaustFanState(int state) {
-        reference.child("exhaustState").setValue(state);
+        reference.child("exhaustFan").setValue(state);
 
     }
 
@@ -241,5 +298,18 @@ dismissProgressDialog();
 
     private void dismissProgressDialog(){
         progressDialog.dismiss();
+    }
+
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot) {
+        GreenhouseSettings settings = dataSnapshot.getValue(GreenhouseSettings.class);
+        updateUI(settings);
+    }
+
+
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+
     }
 }
