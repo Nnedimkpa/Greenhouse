@@ -48,14 +48,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Outer Temperature: 80C" />
+                android:text="Outer Temperature: ~C" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:id="@+id/lightText"
-                android:text="Light Level: 20%" />
+                android:text="Light Level: ~%" />
 
 
         </LinearLayout>
@@ -70,14 +70,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:id="@+id/humidityText"
-                android:text="Humidity: 80%" />
+                android:text="Humidity: ~%" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:id="@+id/waterText"
-                android:text="Water Level: 30%" />
+                android:text="Water Level: ~%" />
 
 
         </LinearLayout>

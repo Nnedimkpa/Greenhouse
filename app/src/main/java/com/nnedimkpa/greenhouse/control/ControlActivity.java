@@ -24,7 +24,6 @@ public class ControlActivity extends AppCompatActivity implements BottomNavigati
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_control);
 
-        int mode = getIntent().getIntExtra("mode", 99);
         int plantData = getIntent().getIntExtra("plantData", 99);
         fragmentManager = getSupportFragmentManager();
         switchFragment(getControlFragment(plantData));

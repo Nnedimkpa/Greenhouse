@@ -39,6 +39,8 @@ public class ManualFragment extends Fragment implements View.OnClickListener,Res
     private final int MODE_MANUAL = 0;
     private static final String THING_SPEAK_URL="https://api.thingspeak.com/channels/220794/feeds/last.json?api_key=MO4W3RQUZKP7B1OO";
     private ProgressDialog progressDialog;
+    final Handler handler = new Handler();
+
 
     // TODO: Rename and change types of parameters
     private int plantData;
@@ -97,6 +99,11 @@ showProgressDialog();
         binding.pumpOn.setOnClickListener(this);
         binding.modeSwitch.setOnClickListener(this);
         return binding.getRoot();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
     }
 
     private void setMode(int mode) {
@@ -193,7 +200,6 @@ showProgressDialog();
     }
 
     private void resendRequest(){
-        final Handler handler = new Handler();
         handler.postDelayed(this, 15000);
     }
 

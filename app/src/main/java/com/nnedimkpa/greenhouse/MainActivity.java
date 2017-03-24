@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.nnedimkpa.greenhouse.control.ControlActivity;
 import com.nnedimkpa.greenhouse.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void startNewActivity(int plantData) {
-        Intent intent = new Intent(this, ModeSelectActivity.class);
+        Intent intent = new Intent(this, ControlActivity.class);
         intent.putExtra("plantData", plantData);
         startActivity(intent);
     }
