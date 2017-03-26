@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.android.volley.Request;
@@ -36,7 +37,7 @@ public class ControlActivity extends AppCompatActivity implements BottomNavigati
     private Fragment chartFragment, controlFragment;
     private FragmentManager fragmentManager;
     private int plantData;
-    private static final String THING_SPEAK_URL = "https://api.thingspeak.com/channels/220794/feeds.json?results=30&api_key=MO4W3RQUZKP7B1OO";
+    private static final String THING_SPEAK_URL = "https://api.thingspeak.com/channels/220794/feeds.json?results=10&api_key=MO4W3RQUZKP7B1OO";
 
 
     @Override
@@ -116,6 +117,7 @@ public class ControlActivity extends AppCompatActivity implements BottomNavigati
 
     @Override
     public void onErrorResponse(VolleyError error) {
+        Log.d("NnediGreen", error.getMessage());
         ChartFragment chartFragment = (ChartFragment)this.chartFragment;
         chartFragment.dismissProgressDialog();
         chartFragment.showError();
@@ -124,12 +126,14 @@ public class ControlActivity extends AppCompatActivity implements BottomNavigati
 
     @Override
     public void onResponse(String response) {
+        Log.d("NnediGreen", response);
         ParseJSON parseJSON = new ParseJSON();
         ChartFragment chartFragment = (ChartFragment)this.chartFragment;
+        chartFragment.dismissProgressDialog();
 
         try {
             readings = parseJSON.readJson(response);
-            chartFragment.dismissProgressDialog();
+
             chartFragment.convertReadingToEntry(readings);
             chartFragment.plotGraphs();
         } catch (JSONException e) {

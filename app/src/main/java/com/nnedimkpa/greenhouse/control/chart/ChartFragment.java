@@ -164,6 +164,7 @@ public class ChartFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
+        showProgressDialog();
         activity.refreshCharts();
     }
 }

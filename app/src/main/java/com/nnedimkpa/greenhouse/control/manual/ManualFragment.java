@@ -111,6 +111,7 @@ public class ManualFragment extends Fragment implements View.OnClickListener, Re
     @Override
     public void onStop() {
         super.onStop();
+        handler.removeCallbacks(this);
     }
 
     private void setMode(int mode) {
