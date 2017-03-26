@@ -15,6 +15,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Dr Francis Idachaba"
+            android:padding="8dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Nnedimkpa Nnadi - 2017"
             android:padding="8dp"/>
         <LinearLayout
