@@ -24,6 +24,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.nnedimkpa.greenhouse.R;
+import com.nnedimkpa.greenhouse.control.commands.BluetoothControl;
+import com.nnedimkpa.greenhouse.control.commands.CommandsContract;
+import com.nnedimkpa.greenhouse.control.commands.FirebaseControl;
 import com.nnedimkpa.greenhouse.databinding.FragmentManualBinding;
 import com.nnedimkpa.greenhouse.model.GreenhouseSettings;
 import com.nnedimkpa.greenhouse.model.ParseJSON;
@@ -36,7 +39,7 @@ import org.json.JSONException;
  * Use the {@link ManualFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ManualFragment extends Fragment implements View.OnClickListener, Response.ErrorListener, Response.Listener<String>, Runnable, ValueEventListener {
+public class ManualFragment extends Fragment implements View.OnClickListener, Response.ErrorListener, Response.Listener<String>, Runnable, ValueEventListener, CommandsContract.ValueListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -46,11 +49,12 @@ public class ManualFragment extends Fragment implements View.OnClickListener, Re
     private static final int MODE_OFF = 0;
     private static final String THING_SPEAK_URL = "https://api.thingspeak.com/channels/220794/feeds/last.json?api_key=MO4W3RQUZKP7B1OO";
     final Handler handler = new Handler();
-    private DatabaseReference reference;
     private ProgressDialog progressDialog;
+    private CommandsContract control;
     // TODO: Rename and change types of parameters
     private int plantData;
     private FragmentManualBinding binding;
+    private boolean sendCommands = false;
 
 
     public ManualFragment() {
@@ -79,7 +83,7 @@ public class ManualFragment extends Fragment implements View.OnClickListener, Re
         if (getArguments() != null) {
             plantData = getArguments().getInt(ARG_PARAM1);
         }
-        reference = FirebaseDatabase.getInstance().getReference("commands");
+        control = new FirebaseControl();
 
 
     }
@@ -103,8 +107,8 @@ public class ManualFragment extends Fragment implements View.OnClickListener, Re
         binding.pumpOff.setOnClickListener(this);
         binding.pumpOn.setOnClickListener(this);
         binding.modeSwitch.setOnClickListener(this);
-        reference.child("plantData").setValue(plantData);
-        reference.addValueEventListener(this);
+        control.setListener(this);
+
         return binding.getRoot();
     }
 
@@ -116,7 +120,7 @@ public class ManualFragment extends Fragment implements View.OnClickListener, Re
 
     private void setMode(int mode) {
 
-        reference.child("automatic").setValue(mode);
+        control.setMode(mode);
         if (mode == MODE_AUTOMATIC) doAutoStuff();
         if (mode == MODE_MANUAL) doManualStuff();
     }
@@ -136,6 +140,7 @@ public class ManualFragment extends Fragment implements View.OnClickListener, Re
     @Override
     public void onClick(View view) {
 
+        if (!sendCommands) return;
         switch (view.getId()) {
             case R.id.bulbOff:
                 Toast.makeText(getActivity(), "Working on it...", Toast.LENGTH_SHORT).show();
@@ -241,24 +246,23 @@ public class ManualFragment extends Fragment implements View.OnClickListener, Re
     }
 
     private void setBulbState(int state) {
-        reference.child("bulb").setValue(state);
+        control.setBulbState(state);
     }
 
     private void setCoolingFanState(int state) {
-        reference.child("coolingFan").setValue(state);
+        control.setCoolingFanState(state);
     }
 
     private void setExhaustFanState(int state) {
-        reference.child("exhaustFan").setValue(state);
-
+control.setExhaustFanState(state);
     }
 
     private void setLightState(int state) {
-        reference.child("light").setValue(state);
+        control.setLightState(state);
     }
 
     private void setPumpState(int state) {
-        reference.child("pump").setValue(state);
+        control.setPumpState(state);
     }
 
     private void sendRequest() {
@@ -313,14 +317,38 @@ public class ManualFragment extends Fragment implements View.OnClickListener, Re
 
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
-        GreenhouseSettings settings = dataSnapshot.getValue(GreenhouseSettings.class);
 
-        updateUI(settings);
     }
 
 
     @Override
     public void onCancelled(DatabaseError databaseError) {
 
+    }
+
+    @Override
+    public void onConnected() {
+        sendCommands = true;
+        Toast.makeText(getActivity(), "Connected to Control Module", Toast.LENGTH_SHORT).show();
+        control.setPlant(plantData);
+    }
+
+    @Override
+    public void onDisconnected() {
+        sendCommands = false;
+        Toast.makeText(getActivity(), "Disconnected from Control Module", Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onConnectionFailed() {
+
+        sendCommands = false;
+        Toast.makeText(getActivity(), "Connection to Control Module failed", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSettingsChanged(GreenhouseSettings settings) {
+        updateUI(settings);
     }
 }

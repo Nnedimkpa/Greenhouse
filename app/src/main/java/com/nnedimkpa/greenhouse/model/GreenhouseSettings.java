@@ -15,6 +15,16 @@ public class GreenhouseSettings {
     public GreenhouseSettings() {
     }
 
+    public static GreenhouseSettings init(){
+        GreenhouseSettings settings = new GreenhouseSettings();
+        settings.setAutomatic(0);
+        settings.setBulb(0);
+        settings.setCoolingFan(0);
+        settings.setExhaustFan(0);
+        settings.setLight(0);
+        settings.setPump(0);
+        return settings;
+    }
     public void setBulb(int bulb) {
         this.bulb = bulb;
     }
