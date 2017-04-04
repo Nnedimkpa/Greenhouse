@@ -83,9 +83,11 @@ public class ManualFragment extends Fragment implements View.OnClickListener, Re
         if (getArguments() != null) {
             plantData = getArguments().getInt(ARG_PARAM1);
         }
+        //for firebase
         control = new FirebaseControl();
 
-
+        //for bluetooth
+        // control = new BluetoothControl(getActivity());
     }
 
     @Override
